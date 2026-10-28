@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#11131c"/>
+  <title>接著唱 · 聚會猜歌</title>
+  <style>body{margin:0;background:#11131c;color:#eeeef3;font-family:system-ui,sans-serif}.boot{max-width:420px;margin:18vh auto;padding:28px;line-height:1.8}.boot h1{color:#c7f576}.boot button{padding:12px 20px;background:#c7f576;color:#182113;border:0;border-radius:8px;font:inherit}.boot small{display:block;overflow-wrap:anywhere;color:#aeb3c6}</style>
+</head>
+<body>
+  <div id="root"><div class="boot" id="boot"><h1>接著唱 ♫</h1><p id="boot-message">正在載入遊戲…</p><small id="boot-detail"></small><button onclick="location.reload()">重新載入</button><noscript><p>請允許瀏覽器執行 JavaScript，才能加入遊戲。</p></noscript></div></div>
+  <script>
+    (function () {
+      function report(message, detail) {
+        var boot = document.getElementById('boot');
+        if (!boot) return;
+        document.getElementById('boot-message').textContent = message;
+        document.getElementById('boot-detail').textContent = detail || '';
+      }
+      window.addEventListener('error', function (event) {
+        var resource = event.target && event.target.tagName === 'SCRIPT';
+        if (resource || event.message) report('遊戲程式載入失敗，請重新載入。', event.message || '無法下載遊戲檔案；請確認網址使用 http，並允許 Chrome 存取區域網路。');
+      }, true);
+      setTimeout(function () { report('載入時間較長，請確認手機與電腦連同一個 Wi-Fi。', '若持續停在這裡，請提供這段文字及網址：' + location.href); }, 12000);
+    }());
+  </script>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "FDeRzYjRGvY-45",
+    "enabled": true,
+    "title": "我們的愛",
+    "artist": " F.I.R. 飛兒樂團",
+    "points": 10,
+    "prompt": "接出接下來兩句",
+    "cue": "請接出影片暫停後的兩句歌詞",
+    "videoId": "88D2-J_pk7A",
+    "questionClip": {
+      "startSeconds": 97,
+      "endSeconds": 127
+    },
+    "answerClip": {
+      "startSeconds": 97,
+      "endSeconds": 148
+    },
+    "lineLengths": [
+      14,
+      14
+    ],
+    "lines": [
+      "我們的愛，我明白已變成你的負擔",
+      "只是永遠，我還放不開最後的溫暖"
+    ]
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "name": "song-party",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server/index.js",
+    "build": "vite build",
+    "start": "node server/index.js --production",
+    "test": "node --test tests/game.test.js tests/api.test.js tests/question-editor.test.js"
+  },
+  "dependencies": {
+    "opencc-js": "^1.0.5",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^5.4.21"
+  }
+}
