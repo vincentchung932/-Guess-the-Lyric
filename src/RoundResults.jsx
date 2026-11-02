@@ -25,9 +25,9 @@ export default function RoundResults({ room, host, busy, connected, onNext }) {
     <div className="mark-legend"><span>紅線刪除錯字，上方補正確字</span><span>∧ 漏字補入</span><span>× 多字刪除</span></div>
     <table className="answers-table"><thead><tr><th scope="col">排名</th><th scope="col">隊名</th><th scope="col">作答與批改</th><th scope="col">本題得分</th></tr></thead><tbody>{players.map(player => {
       const result = player.result;
-      return <tr key={player.id}><td className="result-rank">{player.rank}</td><th className="result-team" scope="row">{player.name}</th><td className="result-answer"><p className="original-answer"><span>{player.submitted ? '原答' : '未作答'}</span>{result?.answer || '（空白）'}{result?.autoSubmitted && <small className="auto-submitted">截止時自動提交</small>}</p>{result && <AnswerCorrections result={result}/>}</td><td className="result-points"><strong>{(result?.points || 0).toFixed(1)}</strong><span> / {room.question.points.toFixed(1)} 分</span><small>正確率 {(result?.accuracy || 0).toFixed(1)}%</small>{room.question.practice && <small className="practice-score">試玩，不計入總分</small>}</td></tr>;
+      return <tr key={player.id}><td className="result-rank">{player.rank}</td><th className="result-team" scope="row">{player.name}</th><td className="result-answer"><p className="original-answer"><span>{player.submitted ? '原答' : '未作答'}</span>{result?.answer || '（空白）'}{result?.autoSubmitted && <small className="auto-submitted">截止時自動提交</small>}</p>{result && <AnswerCorrections result={result}/>}</td><td className="result-points"><strong>{(result?.points || 0).toFixed(1)}</strong><span> / {room.question.points.toFixed(1)} 分</span><small>正確率 {(result?.accuracy || 0).toFixed(1)}%</small>{result?.manualReason && <small className="auto-submitted">主持人改分：{result.manualReason}</small>}{room.question.practice && <small className="practice-score">試玩，不計入總分</small>}</td></tr>;
     })}</tbody></table>
-    <p className="results-formula">得分＝滿分 × max(0, 1 − 錯誤數 ÷ 正確歌詞字數)，四捨五入到小數點第一位。標點、空格與繁簡差異不扣分。</p>
+    <p className="results-formula">得分＝滿分 × max(0, 1 − 錯誤數 ÷ 正確歌詞字數)，四捨五入到小數點第一位。標點、空格與繁簡差異不扣分。你／妳、他／她／它／牠、的／地／得、啊／阿、嗯／恩、喔／哦／噢互相算對。</p>
     {!host && <p className="center muted">等待主持人進入下一題或公布最終排名。</p>}
   </section>;
 }

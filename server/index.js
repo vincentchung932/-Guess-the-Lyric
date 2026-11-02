@@ -3,7 +3,7 @@ import path from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { Game } from './game.js';
 import { QuestionStore, isLocalEditorRequest } from './question-store.js';
-import { invitationOrigin, lanUrls } from './network.js';
+import { invitationOrigin } from './network.js';
 
 const game = new Game();
 const questionStore = new QuestionStore();
@@ -53,6 +53,17 @@ const server = http.createServer(async (req, res) => {
   try {
     rateLimit(req);
     if (req.headers.origin && req.headers.origin !== `http://${req.headers.host}` && req.headers.origin !== `https://${req.headers.host}`) throw new Error('不允許此來源。');
+    if (url.pathname === '/api/host-rooms') {
+      if (!isLocalEditorRequest(req)) return send(res, 403, { error: '請在主持人電腦以 localhost 開啟房間控制台。' });
+      if (!['GET', 'DELETE'].includes(req.method)) return send(res, 405, { error: '不支援的操作。' });
+      let removed = [];
+      if (req.method === 'DELETE') {
+        if (req.headers['x-room-control'] !== '1') return send(res, 403, { error: '請使用房間控制台清除。' });
+        removed = game.clearFinished();
+        for (const code of removed) { for (const stream of streams.get(code) || []) stream.res.end(); streams.delete(code); }
+      }
+      return send(res, 200, { removed: removed.length, rooms: [...game.rooms.values()].map(room => ({ code: room.code, token: room.hostToken, role: 'host', phase: room.phase, teams: room.players.length })) });
+    }
     if (url.pathname === '/api/question-bank') {
       if (!isLocalEditorRequest(req)) return send(res, 403, { error: '題庫管理僅限主持人電腦。請在電腦開啟 http://localhost:' + port + '/admin' });
       if (req.method === 'GET') return send(res, 200, questionStore.read());
@@ -68,7 +79,7 @@ const server = http.createServer(async (req, res) => {
       const duration = [120, 180, 300].includes(body.duration) ? body.duration : 120;
       const room = game.create(duration, questionStore.active()); return send(res, 201, { code: room.code, token: room.hostToken, joinBaseUrl: invitationOrigin(req.headers.host, port) });
     }
-    const match = url.pathname.match(/^\/api\/rooms\/(\d{6})(?:\/(join|events|command|answer|draft))?$/);
+    const match = url.pathname.match(/^\/api\/rooms\/(\d{6})(?:\/(join|events|command|answer|draft|control))?$/);
     if (!match) return send(res, 404, { error: '找不到此功能。' });
     const room = game.get(match[1]); const action = match[2];
     if (action === 'join' && req.method === 'POST') {
@@ -77,6 +88,13 @@ const server = http.createServer(async (req, res) => {
     }
     const auth = action === 'events' ? url.searchParams.get('token') : req.headers.authorization?.replace(/^Bearer /, '');
     const actor = game.actor(room, auth);
+    if (action === 'control') {
+      if (!actor.host) return send(res, 403, { error: '只有主持人可以管理房間。' });
+      if (!['GET', 'POST'].includes(req.method)) return send(res, 405, { error: '不支援的操作。' });
+      const bank = questionStore.read().bank;
+      if (req.method === 'POST') { game.manage(room, await readBody(req), bank); broadcast(room); }
+      return send(res, 200, { ...game.snapshot(room, actor), queue: room.questions, history: room.history, teams: room.players.map(({ id, name, total }) => ({ id, name, total })), bank: bank.filter(q => q.enabled) });
+    }
     if (action === 'events' && req.method === 'GET') {
       res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive', 'X-Accel-Buffering': 'no', 'Referrer-Policy': 'no-referrer' });
       res.write(`data: ${JSON.stringify(game.snapshot(room, actor))}\n\n`);
@@ -87,7 +105,8 @@ const server = http.createServer(async (req, res) => {
     }
     if (action === 'command' && req.method === 'POST') {
       if (!actor.host) throw new Error('只有主持人可以控制遊戲。');
-      game.command(room, (await readBody(req)).action); broadcast(room);
+      const body = await readBody(req);
+      game.command(room, body.action, body); broadcast(room);
       return send(res, 200, game.snapshot(room, actor));
     }
     if (action === 'answer' && req.method === 'POST') {
@@ -120,5 +139,5 @@ setInterval(() => {
 server.listen(port, '0.0.0.0', () => {
   console.log(`接著唱已啟動：http://localhost:${port}`);
   console.log(`題庫管理（僅電腦）：http://localhost:${port}/admin`);
-  for (const url of lanUrls(port)) console.log(`手機同 Wi-Fi 加入：${url}`);
+  console.log(`房間控制台（僅電腦）：http://localhost:${port}/control`);
 });

@@ -13,7 +13,8 @@ export function validateQuestionBank(bank, { allowEmpty = false } = {}) {
     for (const field of ['title', 'artist', 'cue', 'prompt']) if (q[field] !== undefined && (typeof q[field] !== 'string' || q[field].length > 300)) throw new Error(`${q.id}：${field} 請使用 300 字以內文字。`);
     if (!q.enabled) continue;
     if (!validQuestionPoints(q.points)) throw new Error(`${q.id}：配分須為 0.1～1000000 的正數，最多一位小數。`);
-    if (!Array.isArray(q.lines) || q.lines.length < 1 || q.lines.length > 2 || q.lines.some(s => typeof s !== 'string' || !normalize(s))) throw new Error(`${q.id}：請提供一到兩句正確歌詞。`);
+    if (!Array.isArray(q.lines) || q.lines.length < 1 || q.lines.some(s => typeof s !== 'string' || !normalize(s))) throw new Error(`${q.id}：請提供至少一句正確歌詞。`);
+    if (q.lines.join('').length > 300) throw new Error(`${q.id}：全部歌詞含標點及空格最多 300 字元。`);
     const lengths = q.lines.map(s => Array.from(normalize(s)).length);
     if (lengths.some(n => n > 50)) throw new Error(`${q.id}：每句最多 50 個字。`);
     if (q.lineLengths && (!Array.isArray(q.lineLengths) || q.lineLengths.length !== lengths.length || q.lineLengths.some((n, i) => n !== lengths[i]))) throw new Error(`${q.id}：格數與忽略標點後的歌詞字數不一致。`);

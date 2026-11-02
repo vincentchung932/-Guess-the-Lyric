@@ -37,7 +37,7 @@ export default function QuestionEditor() {
     setDirty(true); setNotice(''); setPreview(null);
   }
   function add(copy) {
-    const item = copy ? { ...structuredClone(copy), id: newId(), title: `${copy.title || '未命名歌曲'}（副本）`, enabled: false } : toEditor({ id: newId(), enabled: false, title: '', artist: '', points: 10, prompt: '接出接下來兩句', cue: '請接出影片暫停後的歌詞', videoId: '', lines: ['', ''] });
+    const item = copy ? { ...structuredClone(copy), id: newId(), title: `${copy.title || '未命名歌曲'}（副本）`, enabled: false } : toEditor({ id: newId(), enabled: false, title: '', artist: '', points: 10, prompt: '接出接下來的歌詞', cue: '請接出影片暫停後的歌詞', videoId: '', lines: [''] });
     setBank(items => [...items, item]); setSelected(item.id); setDirty(true); setPreview(null); setNotice('');
   }
   function move(index, direction) {
@@ -74,7 +74,7 @@ export default function QuestionEditor() {
       const clean = bank.map((item, index) => { try { return fromEditor(item); } catch (e) { throw new Error(`第 ${index + 1} 題「${item.title || '未命名'}」：${e.message}`); } });
       const response = await fetch('/api/question-bank', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Question-Editor': '1' }, body: JSON.stringify({ bank: clean, version }) });
       const data = await response.json(); if (!response.ok) throw new Error(data.error);
-      setBank(data.bank.map(toEditor)); setVersion(data.version); setDirty(false); setRemoved(null); setNotice('已儲存。新房間會使用更新的題庫，進行中的房間不受影響。');
+      setBank(data.bank.map(toEditor)); setVersion(data.version); setDirty(false); setRemoved(null); setNotice('已儲存。可到房間控制台按「重新讀取題庫」，再將歌曲加入目前房間。');
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
   function play(kind) {
@@ -82,7 +82,7 @@ export default function QuestionEditor() {
     catch (e) { setError(e.message); }
   }
 
-  return <div className="app editor-app"><header className="topbar"><a className="brand" href="/" target="_blank" rel="noreferrer"><span className="brand-icon">♫</span>接著唱<span className="brand-en">QUESTION STUDIO</span></a><span className="editor-private">● 僅限本機電腦</span></header>
+  return <div className="app editor-app"><header className="topbar"><a className="brand" href="/" target="_blank" rel="noreferrer"><span className="brand-icon">♫</span>接著唱<span className="brand-en">QUESTION STUDIO</span></a><a className="text-button" href="/control">目前房間控制台 →</a><span className="editor-private">● 僅限本機電腦</span></header>
     <main className="editor-main"><div className="editor-title"><div><span className="eyebrow muted">BEHIND THE NEXT VERSE</span><h1>準備今晚的好歌。</h1><p>選片段、填歌詞，把下一句留給朋友。</p></div><div className="editor-tools"><span className={dirty ? 'unsaved' : 'muted'}>{dirty ? '● 有未儲存的變更' : '所有變更已儲存'}</span><button className="secondary" disabled={busy} onClick={() => dirty ? setConfirmReload(true) : load()}>重新載入</button><button className="primary" form="question-form" disabled={busy || !loaded || !dirty}>{busy ? '處理中…' : '儲存題庫 ✓'}</button></div></div>
       {error && <div className="error" role="alert">{error}<button type="button" onClick={() => setError('')} aria-label="關閉錯誤">×</button></div>}
       {notice && <div className="editor-notice" role="status">{notice}{removed && <button type="button" className="text-button undo-delete" onClick={undoRemove}>復原刪除 ↶</button>}</div>}
@@ -96,7 +96,7 @@ export default function QuestionEditor() {
             <div className="clip-fields"><TimeFields title="提示片段" start={q._qs} end={q._qe} onStart={value => change({ _qs: value })} onEnd={value => change({ _qe: value })} onPlay={() => play('question')}/><TimeFields title="答案片段" start={q._as} end={q._ae} onStart={value => change({ _as: value })} onEnd={value => change({ _ae: value })} onPlay={() => play('answer')}/></div>
             {preview && <div className="editor-preview"><div className="preview-label"><strong>片段試播 · 不會開啟遊戲倒數</strong><button type="button" className="text-button" onClick={() => setPreview(null)}>關閉試播 ×</button></div><YouTubeClip key={preview.key} clip={preview}/></div>}
           </section>
-          <section className="edit-section"><h3>02 / 填入正確歌詞</h3><div className="lyric-label"><label htmlFor="line-count">要猜幾句？</label><select id="line-count" value={q.lines.length} onChange={e => change({ lines: Number(e.target.value) === 1 ? [q.lines[0]] : [q.lines[0], ''] })}><option value={1}>一句</option><option value={2}>兩句</option></select></div>{q.lines.map((line, index) => <div key={index}><label htmlFor={`lyric-${index}`}>第 {index + 1} 句正確歌詞 <span className="char-count">{lyricLength(line)} 格</span></label><input id={`lyric-${index}`} value={line} maxLength={150} placeholder="可保留標點，格數會自動計算" onChange={e => change({ lines: q.lines.map((text, i) => i === index ? e.target.value : text) })}/></div>)}<div className="grid-preview"><span className="section-label">玩家看到的格數</span>{q.lines.map((line, i) => <div className="editor-grid" key={i}>{createLyricLayout([line])[0].map((token, j) => token.type === 'slot' ? <span key={j}>·</span> : <span className={`lyric-format ${token.type}`} key={j}>{token.text}</span>)}{!lyricLength(line) && <small>填入第 {i + 1} 句歌詞後顯示格子</small>}</div>)}</div><p className="field-help">標點與空格會顯示給玩家作為提示，不占格數、不影響判分；繁簡視為相同，同音錯字仍扣分。</p></section>
+          <section className="edit-section"><h3>02 / 填入正確歌詞</h3><label htmlFor="correct-lyrics">正確歌詞（每行一句）</label><textarea id="correct-lyrics" rows={5} value={q.lines.join("\n")} placeholder={"輸入第一句歌詞\n按 Enter 輸入下一句"} onChange={e => change({ lines: e.target.value.split(/\r\n|\r|\n/) })}/><p className="field-help">按 Enter 換行就是下一句，不用設定句數；儲存時會忽略空白行。每句最多 50 字，全部歌詞含標點及空格最多 300 字元。</p><div className="grid-preview"><span className="section-label">玩家看到的格數</span>{q.lines.map((line, i) => <div className="editor-grid" key={i}>{createLyricLayout([line])[0].map((token, j) => token.type === 'slot' ? <span key={j}>·</span> : <span className={`lyric-format ${token.type}`} key={j}>{token.text}</span>)}{!lyricLength(line) && <small>填入第 {i + 1} 句歌詞後顯示格子</small>}</div>)}</div><p className="field-help">標點與空格會顯示給玩家作為提示，不占格數、不影響判分；繁簡及指定字組（你／妳、他／她／它／牠、的／地／得、啊／阿、嗯／恩、喔／哦／噢）視為相同，其他同音錯字仍扣分。</p></section>
           <section className="edit-section"><h3>03 / 玩家看到的提示</h3><label htmlFor="song-prompt">題目文字</label><input id="song-prompt" value={q.prompt || ''} maxLength={100} onChange={e => change({ prompt: e.target.value })}/><label htmlFor="song-cue">公開提示</label><input id="song-cue" value={q.cue || ''} maxLength={200} onChange={e => change({ cue: e.target.value })}/><p className="field-help">歌名與歌手在揭曉後才顯示；這段提示會在答題前公開，不要填答案。</p></section>
           <div className="editor-save-bottom"><span>儲存後的新房間立即生效，無需重啟。</span><button className="primary" disabled={!dirty || busy}>儲存題庫 ✓</button></div>
         </fieldset></>}</form></div>}

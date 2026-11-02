@@ -1,13 +1,19 @@
 import * as OpenCC from 'opencc-js';
 
 const convert = OpenCC.Converter({ from: 'tw', to: 'cn' });
+const acceptedGroups = ['你妳', '他她它牠', '的地得', '啊阿', '嗯恩', '喔哦噢'];
+const equivalent = new Map(acceptedGroups.flatMap(group => {
+  const chars = Array.from(convert(group));
+  return chars.map(char => [char, chars[0]]);
+}));
 export function normalize(text) {
   return convert(String(text).normalize('NFKC')).replace(/[\p{P}\p{Z}\p{C}\s]/gu, '');
 }
 
 export function scoreAnswer(answer, expected, maxPoints) {
-  const a = Array.from(normalize(answer));
-  const b = Array.from(normalize(expected));
+  const comparable = text => Array.from(normalize(text), char => equivalent.get(char) || char);
+  const a = comparable(answer);
+  const b = comparable(expected);
   const display = text => Array.from(String(text).normalize('NFKC').replace(/[\p{P}\p{Z}\p{C}\s]/gu, ''));
   const rawA = display(answer), rawB = display(expected);
   const shownA = rawA.length === a.length ? rawA : a;

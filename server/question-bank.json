@@ -9,7 +9,7 @@
     "cue": "請接出影片暫停後的兩句歌詞",
     "videoId": "88D2-J_pk7A",
     "questionClip": {
-      "startSeconds": 97,
+      "startSeconds": 104,
       "endSeconds": 127
     },
     "answerClip": {
@@ -23,6 +23,383 @@
     "lines": [
       "我們的愛，我明白已變成你的負擔",
       "只是永遠，我還放不開最後的溫暖"
-    ]
+    ],
+    "practice": true
+  },
+  {
+    "id": "song-mvvv990u-a6as5r",
+    "enabled": true,
+    "title": "小幸運",
+    "artist": "田馥甄",
+    "points": 10,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "_sQSXwdtxlY",
+    "lines": [
+      "原來你是我最想留住的幸運， ",
+      "原來我們和愛情曾經靠得那麽近"
+    ],
+    "practice": false,
+    "lineLengths": [
+      12,
+      14
+    ],
+    "questionClip": {
+      "startSeconds": 74,
+      "endSeconds": 97
+    },
+    "answerClip": {
+      "startSeconds": 74,
+      "endSeconds": 115
+    }
+  },
+  {
+    "id": "song-mvvxx9zj-t85tiw",
+    "enabled": true,
+    "title": "曖昧",
+    "artist": "楊丞琳",
+    "points": 10,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "mebzXfWi87E",
+    "lines": [
+      "曖昧讓人變得貪心 直到等待失去意義"
+    ],
+    "practice": false,
+    "lineLengths": [
+      16
+    ],
+    "questionClip": {
+      "startSeconds": 121,
+      "endSeconds": 158
+    },
+    "answerClip": {
+      "startSeconds": 121,
+      "endSeconds": 170
+    }
+  },
+  {
+    "id": "song-mvvxsgc2-9t19w8",
+    "enabled": true,
+    "title": "給我一個理由忘記",
+    "artist": "A-Lin",
+    "points": 10,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "F5FlN-NBGo8",
+    "lines": [
+      "給我一個理由忘記 那麼愛我的你",
+      "給我一個理由放棄 當時做的決定"
+    ],
+    "practice": false,
+    "lineLengths": [
+      14,
+      14
+    ],
+    "questionClip": {
+      "startSeconds": 65,
+      "endSeconds": 91
+    },
+    "answerClip": {
+      "startSeconds": 65,
+      "endSeconds": 105
+    }
+  },
+  {
+    "id": "song-mvvx7pyz-35qicc",
+    "enabled": true,
+    "title": "隱形的翅膀",
+    "artist": " 張韶涵",
+    "points": 10,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "be2wvNFTLMc",
+    "lines": [
+      "我終於看到所有夢想都開花",
+      "追逐的年輕歌聲多嘹亮"
+    ],
+    "practice": false,
+    "lineLengths": [
+      12,
+      10
+    ],
+    "questionClip": {
+      "startSeconds": 52,
+      "endSeconds": 79
+    },
+    "answerClip": {
+      "startSeconds": 52,
+      "endSeconds": 93
+    }
+  },
+  {
+    "id": "song-mvvvf5vd-sfm18p",
+    "enabled": true,
+    "title": "擱淺",
+    "artist": "周杰倫",
+    "points": 10,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "YJfHuATJYsQ",
+    "lines": [
+      "我只能永遠讀著對白，讀著我給你的傷害",
+      "我原諒不了我，就請你當作我已不在"
+    ],
+    "practice": false,
+    "lineLengths": [
+      17,
+      15
+    ],
+    "questionClip": {
+      "startSeconds": 55,
+      "endSeconds": 83
+    },
+    "answerClip": {
+      "startSeconds": 55,
+      "endSeconds": 99
+    }
+  },
+  {
+    "id": "song-mvvxlpsp-w59jm5",
+    "enabled": true,
+    "title": "最長的電影",
+    "artist": "",
+    "points": 15,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "2zxc27bvrO8",
+    "lines": [
+      "再給我兩分鐘 讓我把記憶結成冰",
+      "別融化了眼淚 妳妝都花了要我怎麼記得"
+    ],
+    "practice": false,
+    "lineLengths": [
+      14,
+      17
+    ],
+    "questionClip": {
+      "startSeconds": 46,
+      "endSeconds": 77
+    },
+    "answerClip": {
+      "startSeconds": 46,
+      "endSeconds": 93
+    }
+  },
+  {
+    "id": "song-mvvw6q5u-2vgi8d",
+    "enabled": true,
+    "title": "我懷念的",
+    "artist": " 孫燕姿",
+    "points": 10,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "3Xj6QoLmoF0",
+    "lines": [
+      "我記得那年生日 也記得那一首歌",
+      "記得那片星空 最緊的右手 最暖的胸口"
+    ],
+    "practice": false,
+    "lineLengths": [
+      14,
+      16
+    ],
+    "questionClip": {
+      "startSeconds": 56,
+      "endSeconds": 92
+    },
+    "answerClip": {
+      "startSeconds": 56,
+      "endSeconds": 110
+    }
+  },
+  {
+    "id": "song-mvvxcz8f-58ukci",
+    "enabled": true,
+    "title": "專屬天使",
+    "artist": " TANK",
+    "points": 15,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "QdWRuFQZ8RI",
+    "lines": [
+      "沒有誰能取代 你在我心上",
+      "擁有一個專屬天使 我哪裏還需要別的願望"
+    ],
+    "practice": false,
+    "lineLengths": [
+      11,
+      18
+    ],
+    "questionClip": {
+      "startSeconds": 101,
+      "endSeconds": 136
+    },
+    "answerClip": {
+      "startSeconds": 101,
+      "endSeconds": 152
+    }
+  },
+  {
+    "id": "song-mvvwkgqd-rz6n2j",
+    "enabled": true,
+    "title": "背叛",
+    "artist": " 曹格",
+    "points": 15,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "xHsSWiLsIRY",
+    "lines": [
+      "當作最後一次對你的溺愛",
+      "冷冷清清淡淡今後都不管 只要你能愉快"
+    ],
+    "practice": false,
+    "lineLengths": [
+      11,
+      17
+    ],
+    "questionClip": {
+      "startSeconds": 71,
+      "endSeconds": 107
+    },
+    "answerClip": {
+      "startSeconds": 90,
+      "endSeconds": 126
+    }
+  },
+  {
+    "id": "song-mvvx2igp-p0nsdd",
+    "enabled": true,
+    "title": "王妃",
+    "artist": " 蕭敬騰",
+    "points": 20,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "qnDlH_S4Fak",
+    "lines": [
+      "妳太美 儘管再無言 我都想用石堆隔絕世界",
+      "我的王妃 我要霸佔妳的美"
+    ],
+    "practice": false,
+    "lineLengths": [
+      18,
+      11
+    ],
+    "questionClip": {
+      "startSeconds": 61,
+      "endSeconds": 84
+    },
+    "answerClip": {
+      "startSeconds": 61,
+      "endSeconds": 98
+    }
+  },
+  {
+    "id": "song-mvvy3nlr-4d0csp",
+    "enabled": true,
+    "title": "曹操",
+    "artist": "林俊傑",
+    "points": 20,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "3J_bkgexrE8",
+    "lines": [
+      "曹操不囉唆 一心要拿荊州",
+      "用陰謀 陽謀 明說 暗奪的摸"
+    ],
+    "practice": false,
+    "lineLengths": [
+      11,
+      11
+    ],
+    "questionClip": {
+      "startSeconds": 0,
+      "endSeconds": 43
+    },
+    "answerClip": {
+      "startSeconds": 0,
+      "endSeconds": 51
+    }
+  },
+  {
+    "id": "song-mvvyqynu-k9ns8h",
+    "enabled": true,
+    "title": "轉身之後",
+    "artist": " 畢書盡 Bii",
+    "points": 20,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "dB0t01rSLGQ",
+    "lines": [
+      "在我轉身之後 你的淚不停流",
+      "雖然心很痛 卻只能說 分開以後 我就要遠走"
+    ],
+    "practice": false,
+    "lineLengths": [
+      12,
+      18
+    ],
+    "questionClip": {
+      "startSeconds": 67,
+      "endSeconds": 99
+    },
+    "answerClip": {
+      "startSeconds": 67,
+      "endSeconds": 120
+    }
+  },
+  {
+    "id": "song-mvvz2m98-daxvpq",
+    "enabled": true,
+    "title": "散場的擁抱",
+    "artist": " 倪安東",
+    "points": 20,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "vANtwIj8oMw",
+    "lines": [
+      "妳煎熬 不肯定什麼是最想要",
+      "愛才又像樂園又像監牢"
+    ],
+    "practice": false,
+    "lineLengths": [
+      12,
+      10
+    ],
+    "questionClip": {
+      "startSeconds": 52,
+      "endSeconds": 94
+    },
+    "answerClip": {
+      "startSeconds": 52,
+      "endSeconds": 106
+    }
+  },
+  {
+    "id": "song-mvvz7lgu-7w84e8",
+    "enabled": true,
+    "title": "朋友",
+    "artist": "周華健",
+    "points": 20,
+    "prompt": "接出接下來的歌詞",
+    "cue": "請接出影片暫停後的歌詞",
+    "videoId": "6lbPgfKK7m4",
+    "lines": [
+      "朋友不曾孤單過 一聲朋友你會懂",
+      "還有傷 還有痛 還要走 還有我"
+    ],
+    "practice": false,
+    "lineLengths": [
+      14,
+      12
+    ],
+    "questionClip": {
+      "startSeconds": 37,
+      "endSeconds": 79
+    },
+    "answerClip": {
+      "startSeconds": 37,
+      "endSeconds": 96
+    }
   }
 ]

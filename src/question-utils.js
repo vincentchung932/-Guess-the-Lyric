@@ -42,8 +42,9 @@ export function fromEditor(q) {
   result.practice = q.practice === true;
   if (result.enabled && !validQuestionPoints(result.points)) throw new Error('配分須為 0.1～1000000 的正數，最多一位小數。');
   result.videoId = parseVideoId(_url);
+  result.lines = q.lines.filter(line => line.trim());
   result.lineLengths = result.lines.map(lyricLength);
-  if (result.enabled && result.lines.some(s => !lyricLength(s))) throw new Error('已啟用的題目必須填寫每句歌詞。');
+  if (result.enabled && (!result.lines.length || result.lines.some(s => !lyricLength(s)))) throw new Error('已啟用的題目必須填寫每句歌詞。');
   if (result.videoId) {
     const question = editorClip(q, 'question'), answer = editorClip(q, 'answer');
     result.questionClip = { startSeconds: question.startSeconds, endSeconds: question.endSeconds };

@@ -11,6 +11,22 @@ import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { createLyricLayout } from '../shared/lyric-layout.js';
 import { invitationOrigin, lanUrls } from '../server/network.js';
+import { controlClipKind, canKeepControlPreview } from '../src/control-playback.js';
+
+test('控制台依階段提供片段，揭曉或換題時不保留提示播放器', () => {
+  assert.equal(controlClipKind('lobby'), null);
+  for (const phase of ['playing', 'answering', 'closing', 'locked']) assert.equal(controlClipKind(phase), 'question');
+  for (const phase of ['revealed', 'results', 'finished']) assert.equal(controlClipKind(phase), 'answer');
+  const preview = { code: '123456', round: 1, kind: 'question' };
+  const state = { code: '123456', round: 1, phase: 'playing' };
+  assert.equal(canKeepControlPreview(preview, state), true);
+  assert.equal(canKeepControlPreview(preview, { ...state, phase: 'answering' }), true);
+  assert.equal(canKeepControlPreview(preview, { ...state, phase: 'revealed' }), false);
+  assert.equal(canKeepControlPreview(preview, { ...state, round: 2 }), false);
+  assert.equal(canKeepControlPreview(preview, { ...state, code: '654321' }), false);
+  assert.equal(canKeepControlPreview({ ...preview, kind: 'answer' }, { ...state, phase: 'revealed' }), true);
+  assert.equal(canKeepControlPreview(null, state), false);
+});
 
 test('編輯器解析影片連結、分秒和自動格數，拒絕錯誤時間與連結', () => {
   assert.equal(parseTime('1:19'), 79); assert.equal(parseTime('79.5'), 79.5);
@@ -27,6 +43,22 @@ test('編輯器解析影片連結、分秒和自動格數，拒絕錯誤時間�
   assert.equal(practice.points, 12.5); assert.equal(practice.practice, true);
   assert.equal(toEditor(questions[0]).practice, false);
   assert.throws(() => fromEditor({ ...edited, points: '' }), /配分/);
+});
+
+test('換行歌詞可儲存三句以上，忽略空白行並保留玩家分行格數', () => {
+  const question = fromEditor({ ...toEditor(questions[0]), lines: ['甲，乙', '', '丙 丁', '  ', '戊己庚', ''] });
+  assert.deepEqual(question.lines, ['甲，乙', '丙 丁', '戊己庚']);
+  assert.deepEqual(question.lineLengths, [2, 2, 3]);
+  const folder = mkdtempSync(path.join(tmpdir(), 'song-multiline-'));
+  try {
+    const file = path.join(folder, 'bank.json'); writeFileSync(file, JSON.stringify([question]));
+    const store = new QuestionStore(file);
+    store.save([question], store.read().version);
+    const game = new Game(store.active()), room = game.create();
+    assert.deepEqual(game.snapshot(room, { host: true }).question.lengths, [2, 2, 3]);
+    assert.equal(game.snapshot(room, { host: true }).question.layout.length, 3);
+    assert.throws(() => fromEditor({ ...toEditor(questions[0]), lines: ['', '  '] }), /填寫/);
+  } finally { rmSync(folder, { recursive: true, force: true }); }
 });
 
 test('管理頁與玩家共用排版，保留全形標點和連續空格，控制字元不洩漏', () => {
