@@ -43,6 +43,10 @@ test('編輯器解析影片連結、分秒和自動格數，拒絕錯誤時間�
   assert.equal(practice.points, 12.5); assert.equal(practice.practice, true);
   assert.equal(toEditor(questions[0]).practice, false);
   assert.throws(() => fromEditor({ ...edited, points: '' }), /配分/);
+  assert.throws(() => fromEditor({ ...edited, _url: '' }), /YouTube 連結/);
+  assert.throws(() => fromEditor({ ...edited, enabled: false, _url: '   ' }), /YouTube 連結/);
+  assert.throws(() => fromEditor({ ...edited, _url: 'https://example.com/video' }), /有效的 YouTube/);
+  assert.equal(fromEditor({ ...edited, enabled: false, _url: '' }, { allowMissingVideo: true }).videoId, '');
 });
 
 test('換行歌詞可儲存三句以上，忽略空白行並保留玩家分行格數', () => {

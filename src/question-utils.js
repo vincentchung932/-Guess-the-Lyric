@@ -36,12 +36,13 @@ export function editorClip(q, kind) {
   if (endSeconds <= startSeconds) throw new Error('片段結束時間必須大於開始時間。');
   return { videoId, startSeconds, endSeconds, kind };
 }
-export function fromEditor(q) {
+export function fromEditor(q, { allowMissingVideo = false } = {}) {
   const { _url, _qs, _qe, _as, _ae, ...result } = q;
   result.points = Number(q.points);
   result.practice = q.practice === true;
   if (result.enabled && !validQuestionPoints(result.points)) throw new Error('配分須為 0.1～1000000 的正數，最多一位小數。');
   result.videoId = parseVideoId(_url);
+  if (!result.videoId && !allowMissingVideo) throw new Error('請填寫 YouTube 連結後再儲存歌曲。');
   result.lines = q.lines.filter(line => line.trim());
   result.lineLengths = result.lines.map(lyricLength);
   if (result.enabled && (!result.lines.length || result.lines.some(s => !lyricLength(s)))) throw new Error('已啟用的題目必須填寫每句歌詞。');

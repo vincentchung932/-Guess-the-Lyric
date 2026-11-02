@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import YouTubeClip from './YouTubeClip.jsx';
 import { toEditor, fromEditor, editorClip, lyricLength } from './question-utils.js';
 import { createLyricLayout } from '../shared/lyric-layout.js';
@@ -7,6 +7,7 @@ import './editor.css';
 
 const newId = () => `song-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 export default function QuestionEditor() {
+  const savedItems = useRef(new Map());
   const [bank, setBank] = useState([]), [version, setVersion] = useState(''), [selected, setSelected] = useState('');
   const [dirty, setDirty] = useState(false), [busy, setBusy] = useState(false), [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(''), [notice, setNotice] = useState(''), [preview, setPreview] = useState(null), [confirmReload, setConfirmReload] = useState(false);
@@ -20,6 +21,7 @@ export default function QuestionEditor() {
     try {
       const response = await fetch('/api/question-bank'); const data = await response.json();
       if (!response.ok) throw new Error(data.error);
+      savedItems.current = new Map(data.bank.map(item => [item.id, JSON.stringify(toEditor(item))]));
       setBank(data.bank.map(toEditor)); setVersion(data.version); setSelected(data.bank[0]?.id || '');
       setDirty(false); setLoaded(true); setPreview(null); setNotice(''); setPendingDelete(null); setRemoved(null);
     } catch (e) { setError(e.message); } finally { setBusy(false); }
@@ -71,9 +73,13 @@ export default function QuestionEditor() {
   async function save(e) {
     e.preventDefault(); setBusy(true); setError(''); setNotice('');
     try {
-      const clean = bank.map((item, index) => { try { return fromEditor(item); } catch (e) { throw new Error(`第 ${index + 1} 題「${item.title || '未命名'}」：${e.message}`); } });
+      const clean = bank.map((item, index) => { try {
+        const unchangedLegacy = !item.enabled && !item._url.trim() && savedItems.current.get(item.id) === JSON.stringify(item);
+        return fromEditor(item, { allowMissingVideo: unchangedLegacy });
+      } catch (e) { throw new Error(`第 ${index + 1} 題「${item.title || '未命名'}」：${e.message}`); } });
       const response = await fetch('/api/question-bank', { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Question-Editor': '1' }, body: JSON.stringify({ bank: clean, version }) });
       const data = await response.json(); if (!response.ok) throw new Error(data.error);
+      savedItems.current = new Map(data.bank.map(item => [item.id, JSON.stringify(toEditor(item))]));
       setBank(data.bank.map(toEditor)); setVersion(data.version); setDirty(false); setRemoved(null); setNotice('已儲存。可到房間控制台按「重新讀取題庫」，再將歌曲加入目前房間。');
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
@@ -92,7 +98,7 @@ export default function QuestionEditor() {
         <form id="question-form" className="panel edit-form" onSubmit={save}>{!q && <div className="empty-state"><h2>題庫目前沒有題目</h2><p>新增一道好歌，就能開始準備下一場聚會。<br/>開房前需要至少一題已啟用的題目。</p><button type="button" className="secondary" onClick={() => add()}>新增題目 ＋</button></div>}{q && <><fieldset disabled={busy}><div className="editor-form-heading"><div><span className="eyebrow muted">{positionLabel(bank.findIndex(item => item.id === selected))}</span><h2>{q.title || '新的好歌'}</h2></div><div className="question-actions"><button type="button" className="secondary" onClick={() => add(q)}>複製這題</button><button type="button" className="danger-button" onClick={() => setPendingDelete({ id: q.id, title: q.title })}>刪除這題</button></div></div>
           <div className="field-row"><div><label htmlFor="song-title">歌曲名稱</label><input id="song-title" value={q.title || ''} maxLength={100} onChange={e => change({ title: e.target.value })} placeholder="例如：天涯"/></div><div><label htmlFor="song-artist">歌手</label><input id="song-artist" value={q.artist || ''} maxLength={100} onChange={e => change({ artist: e.target.value })} placeholder="例如：任賢齊"/></div></div>
           <div className="field-row compact-fields score-settings"><div><label htmlFor="song-points">本題滿分</label><input id="song-points" type="number" inputMode="decimal" min="0.1" max="1000000" step="0.1" value={q.points} onChange={e => change({ points: e.target.value })}/><small className="points-help">自訂分數，最多一位小數</small></div><label className="enable-switch"><input type="checkbox" checked={q.practice === true} onChange={e => change({ practice: e.target.checked })}/><span>試玩題<small>照常計分，不加入隊伍總分</small></span></label><label className="enable-switch"><input type="checkbox" checked={q.enabled} onChange={e => change({ enabled: e.target.checked })}/><span>加入今晚題庫<small>停用後保留內容</small></span></label></div>
-          <section className="edit-section"><h3>01 / 選擇歌曲與片段</h3><label htmlFor="video-url">YouTube 連結</label><input id="video-url" value={q._url} onChange={e => change({ _url: e.target.value })} placeholder="貼上完整 YouTube 網址，不用找影片 ID"/><p className="field-help">留空可由主持人手動播歌。影片是否允許內嵌，請用下方試播確認。</p>
+          <section className="edit-section"><h3>01 / 選擇歌曲與片段</h3><label htmlFor="video-url">YouTube 連結（必填）</label><input required id="video-url" value={q._url} onChange={e => change({ _url: e.target.value })} placeholder="貼上完整 YouTube 網址，不用找影片 ID"/><p className="field-help">新增或編輯歌曲時必須填寫 YouTube 連結。影片是否允許內嵌，請用下方試播確認。</p>
             <div className="clip-fields"><TimeFields title="提示片段" start={q._qs} end={q._qe} onStart={value => change({ _qs: value })} onEnd={value => change({ _qe: value })} onPlay={() => play('question')}/><TimeFields title="答案片段" start={q._as} end={q._ae} onStart={value => change({ _as: value })} onEnd={value => change({ _ae: value })} onPlay={() => play('answer')}/></div>
             {preview && <div className="editor-preview"><div className="preview-label"><strong>片段試播 · 不會開啟遊戲倒數</strong><button type="button" className="text-button" onClick={() => setPreview(null)}>關閉試播 ×</button></div><YouTubeClip key={preview.key} clip={preview}/></div>}
           </section>
